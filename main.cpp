@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "game.h"
-#include "raycaster.h"
+#include "raycaster.h"  // Store constants
 #include "raycaster_fixed.h"
 #include "raycaster_float.h"
 #include "renderer.h"

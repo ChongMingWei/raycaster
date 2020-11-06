@@ -1,7 +1,7 @@
+#include "game.h"
 #include <cmath>
 #include <cstdlib>
-
-#include "game.h"
+#include <iostream>  //debug
 #include "raycaster.h"
 
 void Game::Move(int m, int r, float seconds)
@@ -27,13 +27,15 @@ void Game::Move(int m, int r, float seconds)
     } else if (playerY > MAP_Y - 2) {
         playerY = MAP_Y - 2 - 0.01f;
     }
+    std::cout << "x: " << playerX << "y: " << playerY << "a: " << playerA
+              << std::endl;  // debug
 }
 
 Game::Game()
 {
-    playerX = 23.03f;
-    playerY = 6.8f;
-    playerA = 5.25f;
+    playerX = 0.0f;  // X position 23.03
+    playerY = 0.0f;  // Y position 6.8
+    playerA = 0.0f;  // Angle(0~2*pi)5.25
 }
 
 Game::~Game() {}
