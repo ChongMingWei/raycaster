@@ -60,14 +60,11 @@ inline int16_t RayCasterFixed::AbsTan(uint8_t quarter,
 
 inline bool RayCasterFixed::IsWall(uint8_t tileX, uint8_t tileY)
 {
-    /*if (tileX > MAP_X - 1 || tileY > MAP_Y - 1) {
-        return true;
-    }*/
-    if (tileX >= MAP_X - 1 || tileY >= MAP_Y - 1) {
+    if (tileX < 0 || tileY < 0 || tileX > MAP_X - 1 || tileY > MAP_Y - 1) {
         return true;
     }
-    return LOOKUP8(g_map, (tileX >> 3) + (tileY << (MAP_XS - 3))) &
-           (1 << (8 - (tileX & 0x7)));
+    return LOOKUP8(g_map, (tileX >> 3) + (tileY << (2))) &
+           (1 << (7 - (tileX & 0x7)));
 }
 
 void RayCasterFixed::LookupHeight(uint16_t distance,

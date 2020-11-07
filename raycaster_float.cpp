@@ -15,8 +15,7 @@ bool RayCasterFloat::IsWall(float rayX, float rayY)
     if (tileX < 0 || tileY < 0 || tileX >= MAP_X - 1 || tileY >= MAP_Y - 1) {
         return true;
     }
-    return g_map[(tileX >> 3) + (tileY << (MAP_XS - 3))] &
-           (1 << (8 - (tileX & 0x7)));
+    return g_map[(tileX >> 3) + (tileY << 2)] & (1 << (7 - (tileX & 0x7)));
 }
 
 float RayCasterFloat::Distance(float playerX,

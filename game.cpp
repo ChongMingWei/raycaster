@@ -16,7 +16,7 @@ void Game::Move(int m, int r, float seconds)
     while (playerA >= 2.0f * M_PI) {
         playerA -= 2.0f * M_PI;
     }
-
+    // Limit the available space for player
     if (playerX < 1) {
         playerX = 1.01f;
     } else if (playerX > MAP_X - 2) {
@@ -27,8 +27,8 @@ void Game::Move(int m, int r, float seconds)
     } else if (playerY > MAP_Y - 2) {
         playerY = MAP_Y - 2 - 0.01f;
     }
-    // std::cout << "x: " << playerX << "y: " << playerY << "a: " << playerA<<
-    // std::endl;  // debug
+    std::cout << "x: " << playerX << "y: " << playerY << "a: " << playerA
+              << std::endl;  // debug
 }
 
 Game::Game()
