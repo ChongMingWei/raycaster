@@ -63,8 +63,7 @@ inline bool RayCasterFixed::IsWall(uint8_t tileX, uint8_t tileY)
     if (tileX < 0 || tileY < 0 || tileX > MAP_X - 1 || tileY > MAP_Y - 1) {
         return true;
     }
-    return LOOKUP8(g_map, (tileX >> 3) + (tileY << (2))) &
-           (1 << (7 - (tileX & 0x7)));
+    return g_map[(tileX >> 3) + (tileY << 2)] & (1 << (7 - (tileX & 0x7)));
 }
 
 void RayCasterFixed::LookupHeight(uint16_t distance,

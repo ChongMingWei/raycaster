@@ -19,13 +19,13 @@ void Game::Move(int m, int r, float seconds)
     // Limit the available space for player
     if (playerX < 1) {
         playerX = 1.01f;
-    } else if (playerX > MAP_X - 2) {
-        playerX = MAP_X - 2 - 0.01f;
+    } else if (playerX > MAP_X - 1) {
+        playerX = MAP_X - 1 - 0.01f;
     }
     if (playerY < 1) {
         playerY = 1.01f;
-    } else if (playerY > MAP_Y - 2) {
-        playerY = MAP_Y - 2 - 0.01f;
+    } else if (playerY > MAP_Y - 1) {
+        playerY = MAP_Y - 1 - 0.01f;
     }
     std::cout << "x: " << playerX << "y: " << playerY << "a: " << playerA
               << std::endl;  // debug
