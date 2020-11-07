@@ -7,9 +7,18 @@ class Renderer
 {
     RayCaster *_rc;
 
-    inline static uint32_t GetARGB(uint8_t brightness)
+    inline static uint32_t GetARGB(uint8_t brightness, short type)
     {
-        return (brightness << 16) + (brightness << 8) + brightness;
+        switch (type) {
+        case 0:  // sky
+            return (brightness << 16) + (brightness << 8) + 255;
+        case 1:  // wall
+            return (brightness << 16) + brightness;
+        case 2:  // floor
+            return (brightness << 16) + (255 << 8) + brightness;
+        default:
+            return (brightness << 16) + (brightness << 8) + brightness;
+        }
     }
 
 public:
