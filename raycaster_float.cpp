@@ -2,7 +2,7 @@
 
 #include "raycaster_float.h"
 #include <math.h>
-
+#include <iostream>
 bool RayCasterFloat::IsWall(float rayX, float rayY)
 {
     float mapX = 0;
@@ -52,30 +52,14 @@ float RayCasterFloat::Distance(float playerX,
         startDeltaX = (1 - offsetY) * tan(rayA);
         startDeltaY = (1 - offsetX) / tan(rayA);
     } else if (rayA <= M_PI) {
-        if (offsetY == 0) {
-            startDeltaX = (1) * fabs(tan(rayA));
-        } else {
-            startDeltaX = (offsetY) *fabs(tan(rayA));
-        }
+        startDeltaX = (offsetY) *fabs(tan(rayA));
         startDeltaY = -(1 - offsetX) / fabs(tan(rayA));
     } else if (rayA < 3 * M_PI_2) {
-        if (offsetY == 0) {
-            startDeltaX = -(1) * fabs(tan(rayA));
-        } else {
-            startDeltaX = -(offsetY) *fabs(tan(rayA));
-        }
-        if (offsetX == 0) {
-            startDeltaY = -(1) / fabs(tan(rayA));
-        } else {
-            startDeltaY = -(offsetX) / fabs(tan(rayA));
-        }
+        startDeltaX = -(offsetY) *fabs(tan(rayA));
+        startDeltaY = -(offsetX) / fabs(tan(rayA));
     } else {
         startDeltaX = -(1 - offsetY) * fabs(tan(rayA));
-        if (offsetX == 0) {
-            startDeltaY = (1) / fabs(tan(rayA));
-        } else {
-            startDeltaY = (offsetX) / fabs(tan(rayA));
-        }
+        startDeltaY = (offsetX) / fabs(tan(rayA));
     }
 
     float interceptX = rayX + startDeltaX;
@@ -148,6 +132,8 @@ void RayCasterFloat::Trace(uint16_t screenX,
     *textureStep = 0;
     if (distance > 0) {
         *screenY = INV_FACTOR / distance;
+        // std::cout<<"distance: "<<lineDistance<<" sso: "<< unsigned(*screenY)
+        // <<std::endl;
         auto txs = (*screenY * 2.0f);
         if (txs != 0) {
             *textureStep = (256 / txs) * 256;
@@ -157,6 +143,8 @@ void RayCasterFloat::Trace(uint16_t screenX,
             }
         }
     } else {
+        // std::cout<<"distance: "<<lineDistance<<" sso: "<< unsigned(*screenY)
+        // <<std::endl;
         *screenY = 0;
     }
 }

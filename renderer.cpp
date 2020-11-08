@@ -6,7 +6,7 @@ void Renderer::TraceFrame(Game *g, uint32_t *fb)
 {
     _rc->Start(static_cast<uint16_t>(g->playerX * 256.0f),
                static_cast<uint16_t>(g->playerY * 256.0f),
-               // now,  the range is changed from 0~2*pi to 0~1024
+               // now,  the range is changed from [0, 2*pi) to [0, 1024)
                static_cast<int16_t>(g->playerA / (2.0f * M_PI) * 1024.0f));
 
     // Draw pixel of column x

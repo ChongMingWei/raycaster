@@ -92,28 +92,31 @@ void RayCasterFixed::CalculateDistance(uint16_t rayX,
                                        uint8_t *textureNo,
                                        uint8_t *textureX)
 {
-    int8_t tileStepX;
-    int8_t tileStepY;
-    int16_t interceptX = rayX;
-    int16_t interceptY = rayY;
+    int8_t tileStepX = 0;
+    int8_t tileStepY = 0;
+    int16_t interceptX = rayX;  // x of initial point
+    int16_t interceptY = rayY;  // y of initial point
 
-    const uint8_t quarter = rayA >> 8;
-    const uint8_t angle = rayA % 256;
-    const uint8_t offsetX = rayX % 256;
-    const uint8_t offsetY = rayY % 256;
+    const uint8_t quarter =
+        rayA >> 8;  //  0: [0, 90), 1: [90, 180), 2: [180, 270), 3: [0, 360)
+                    //  number are in degree
+    const uint8_t angle = rayA % 256;    //  [0, 90)
+    const uint8_t offsetX = rayX % 256;  // Get offset (fraction part)
+    const uint8_t offsetY = rayY % 256;  // Get offset (fraction part)
 
-    uint8_t tileX = rayX >> 8;
-    uint8_t tileY = rayY >> 8;
-    int16_t hitX;
-    int16_t hitY;
-
+    uint8_t tileX = rayX >> 8;  // Get integer part
+    uint8_t tileY = rayY >> 8;  // Get integer part
+    int16_t hitX;               // The intersection
+    int16_t hitY;               // The intersection
+    // angle  equlas to 0 represents on x-axis or y-axis
     if (angle == 0) {
         switch (quarter % 2) {
-        case 0:
+        // Horizontal line
+        case 0:  // On y-axis
             tileStepX = 0;
             tileStepY = quarter == 0 ? 1 : -1;
             if (tileStepY == 1) {
-                interceptY -= 256;
+                interceptY -= 256;  //  Minus 1 from integer part
             }
             for (;;) {
                 tileY += tileStepY;
@@ -122,11 +125,12 @@ void RayCasterFixed::CalculateDistance(uint16_t rayX,
                 }
             }
             break;
-        case 1:
+        // Vertical line
+        case 1:  // On x-axis
             tileStepY = 0;
             tileStepX = quarter == 1 ? 1 : -1;
             if (tileStepX == 1) {
-                interceptX -= 256;
+                interceptX -= 256;  //  Minus 1 from integer part
             }
             for (;;) {
                 tileX += tileStepX;
@@ -137,9 +141,9 @@ void RayCasterFixed::CalculateDistance(uint16_t rayX,
             break;
         }
     } else {
-        int16_t stepX;
-        int16_t stepY;
-
+        int16_t stepX = 0;
+        int16_t stepY = 0;
+        // Compute the variables for vertical line
         switch (quarter) {
         case 0:
         case 1:
@@ -155,7 +159,7 @@ void RayCasterFixed::CalculateDistance(uint16_t rayX,
             stepX = -AbsTan(quarter, angle, g_tan);
             break;
         }
-
+        // Compute the variables for horizontal line
         switch (quarter) {
         case 0:
         case 3:
@@ -220,6 +224,7 @@ void RayCasterFixed::Trace(uint16_t screenX,
                            uint16_t *textureY,
                            uint16_t *textureStep)
 {
+    // Compute view angle to each column according to input x (screenX)
     uint16_t rayAngle =
         static_cast<uint16_t>(_playerA + LOOKUP16(g_deltaAngle, screenX));
 
@@ -238,10 +243,11 @@ void RayCasterFixed::Trace(uint16_t screenX,
 
     int16_t deltaX;
     int16_t deltaY;
+    // Compute the distance between player coordinate and intersection of wall
     CalculateDistance(_playerX, _playerY, rayAngle, &deltaX, &deltaY, textureNo,
                       textureX);
 
-    // distance = deltaY * cos(playerA) + deltaX * sin(playerA)
+    // Compute distance = deltaY * cos(playerA) + deltaX * sin(playerA)
     int16_t distance = 0;
     if (_playerA == 0) {
         distance += deltaY;
@@ -282,6 +288,7 @@ void RayCasterFixed::Trace(uint16_t screenX,
             distance -= MulS(LOOKUP8(g_sin, INVERT(_viewAngle)), deltaX);
             break;
         }
+    // Compute sso, tso, tst
     if (distance >= MIN_DIST) {
         *textureY = 0;
         LookupHeight((distance - MIN_DIST) >> 2, screenY, textureStep);
