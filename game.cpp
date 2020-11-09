@@ -33,9 +33,9 @@ void Game::Move(int m, int r, float seconds)
 
 Game::Game()
 {
-    playerX = 1.00186f;  // X position 23.03
-    playerY = 1.0053f;   // Y position 6.8
-    playerA = 4.02641f;  // Angle(0~2*pi)5.25
+    playerX = 3.16511f;  // X position 23.03
+    playerY = 14.3508f;  // Y position 6.8
+    playerA = 1.03001f;  // Angle(0~2*pi)5.25
 }
 
 Game::~Game() {}

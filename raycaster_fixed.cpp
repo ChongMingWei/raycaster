@@ -1,14 +1,14 @@
 // fixed-point implementation
 
 #include "raycaster_fixed.h"
+#include <iostream>  // for debug
 #include "raycaster_data.h"
 #include "raycaster_tables.h"
-
 // (v * f) >> 8
 uint16_t RayCasterFixed::MulU(uint8_t v, uint16_t f)
 {
-    const uint8_t f_h = f >> 8;
-    const uint8_t f_l = f % 256;
+    const uint8_t f_h = f >> 8;   // integer part of f
+    const uint8_t f_l = f % 256;  // fraction part of f
     const uint16_t hm = v * f_h;
     const uint16_t lm = v * f_l;
     return hm + (lm >> 8);
@@ -70,14 +70,15 @@ void RayCasterFixed::LookupHeight(uint16_t distance,
                                   uint8_t *height,
                                   uint16_t *step)
 {
-    if (distance >= 256) {
+    if (distance > 255) {
         const uint16_t ds = distance >> 3;
-        if (ds >= 256) {
-            *height = LOOKUP8(g_farHeight, 255) - 1;
+        if (ds > 255) {
+            *height = LOOKUP8(g_farHeight, 255);
             *step = LOOKUP16(g_farStep, 255);
+        } else {
+            *height = LOOKUP8(g_farHeight, ds);
+            *step = LOOKUP16(g_farStep, ds);
         }
-        *height = LOOKUP8(g_farHeight, ds);
-        *step = LOOKUP16(g_farStep, ds);
     } else {
         *height = LOOKUP8(g_nearHeight, distance);
         *step = LOOKUP16(g_nearStep, distance);
@@ -249,6 +250,8 @@ void RayCasterFixed::Trace(uint16_t screenX,
 
     // Compute distance = deltaY * cos(playerA) + deltaX * sin(playerA)
     int16_t distance = 0;
+    // Compute deltaY * cos(playerA).
+    // If the intersection is on y-axis, directly add or minus deltaY
     if (_playerA == 0) {
         distance += deltaY;
     } else if (_playerA == 512) {
@@ -268,7 +271,8 @@ void RayCasterFixed::Trace(uint16_t screenX,
             distance += MulS(LOOKUP8(g_cos, INVERT(_viewAngle)), deltaY);
             break;
         }
-
+    // Compute deltaX * sin(playerA)
+    // If the intersection is on y-axis, directly add or minus deltaX
     if (_playerA == 256) {
         distance += deltaX;
     } else if (_playerA == 768) {
@@ -292,6 +296,8 @@ void RayCasterFixed::Trace(uint16_t screenX,
     if (distance >= MIN_DIST) {
         *textureY = 0;
         LookupHeight((distance - MIN_DIST) >> 2, screenY, textureStep);
+        // std::cout<<"distance: "<<distance<<" diff: "<< ((distance -
+        // MIN_DIST)>>2)<<std::endl;
     } else {
         *screenY = SCREEN_HEIGHT >> 1;
         *textureY = LOOKUP16(g_overflowOffset, distance);
