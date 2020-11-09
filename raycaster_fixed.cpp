@@ -1,14 +1,14 @@
 // fixed-point implementation
 
 #include "raycaster_fixed.h"
-#include <iostream>  // for debug
+#include <stdio.h>  // for debug
 #include "raycaster_data.h"
 #include "raycaster_tables.h"
 // (v * f) >> 8
 uint16_t RayCasterFixed::MulU(uint8_t v, uint16_t f)
 {
-    const uint8_t f_h = f >> 8;   // integer part of f
-    const uint8_t f_l = f % 256;  // fraction part of f
+    const uint8_t f_h = f >> 8;
+    const uint8_t f_l = f % 256;
     const uint16_t hm = v * f_h;
     const uint16_t lm = v * f_l;
     return hm + (lm >> 8);
@@ -18,7 +18,7 @@ int16_t RayCasterFixed::MulS(uint8_t v, int16_t f)
 {
     const uint16_t uf = MulU(v, static_cast<uint16_t>(ABS(f)));
     if (f < 0) {
-        return ~uf;
+        return ~uf + 1;
     }
     return uf;
 }
@@ -109,16 +109,16 @@ void RayCasterFixed::CalculateDistance(uint16_t rayX,
     uint8_t tileY = rayY >> 8;  // Get integer part
     int16_t hitX;               // The intersection
     int16_t hitY;               // The intersection
-    // angle  equlas to 0 represents on x-axis or y-axis
+    // angle  equlas to 0
     if (angle == 0) {
         switch (quarter % 2) {
         // Horizontal line
         case 0:  // On y-axis
             tileStepX = 0;
             tileStepY = quarter == 0 ? 1 : -1;
-            if (tileStepY == 1) {
+            /*if (tileStepY == 1) {
                 interceptY -= 256;  //  Minus 1 from integer part
-            }
+            }*/
             for (;;) {
                 tileY += tileStepY;
                 if (IsWall(tileX, tileY)) {
@@ -130,9 +130,9 @@ void RayCasterFixed::CalculateDistance(uint16_t rayX,
         case 1:  // On x-axis
             tileStepY = 0;
             tileStepX = quarter == 1 ? 1 : -1;
-            if (tileStepX == 1) {
+            /*if (tileStepX == 1) {
                 interceptX -= 256;  //  Minus 1 from integer part
-            }
+            }*/
             for (;;) {
                 tileX += tileStepX;
                 if (IsWall(tileX, tileY)) {
@@ -299,6 +299,7 @@ void RayCasterFixed::Trace(uint16_t screenX,
         // std::cout<<"distance: "<<distance<<" diff: "<< ((distance -
         // MIN_DIST)>>2)<<std::endl;
     } else {
+        // std::cout<<"distance: "<<distance<<std::endl;
         *screenY = SCREEN_HEIGHT >> 1;
         *textureY = LOOKUP16(g_overflowOffset, distance);
         *textureStep = LOOKUP16(g_overflowStep, distance);

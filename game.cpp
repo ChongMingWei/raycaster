@@ -27,8 +27,8 @@ void Game::Move(int m, int r, float seconds)
     } else if (playerY > MAP_Y - 1) {
         playerY = MAP_Y - 1 - 0.01f;
     }
-    std::cout << "x: " << playerX << "y: " << playerY << "a: " << playerA
-              << std::endl;  // debug
+    // std::cout << "x: " << playerX << "y: " << playerY << "a: " << playerA
+    //         << std::endl;  // debug
 }
 
 Game::Game()
